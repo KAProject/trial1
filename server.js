@@ -18,6 +18,11 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
+// Redirect root to employee.html
+app.get('/', (req, res) => {
+  res.redirect('/employee.html');
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Handle server errors
@@ -67,4 +72,5 @@ process.on('SIGTERM', () => {
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+
 });
