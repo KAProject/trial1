@@ -1,0 +1,47 @@
+<!-- public/employee.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Employee Panel</title>
+  <link rel="stylesheet" href="employee.css">
+</head>
+<body>
+  <h2>Employee Login/Logout</h2>
+  <form id="employeeForm">
+    <h3>Enter Your Name</h3>
+    <input type="text" id="name" placeholder="Employee Name" required><br>
+    <h3>Enter Your Employee Number</h3>
+    <input type="text" id="number" placeholder="Employee Number" required><br> <br>
+    <h3>Choose any One</h3>
+    <input type="hidden" id="time">
+    <button type="button" onclick="sendAction('Login');alert('Welcome')">Login</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button type="button" onclick="sendAction('Logout');alert('ThankYou')">Logout</button>
+  </form>
+  <br><br><br><br>
+  <button onclick="open_admin()">Admin</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="employee.js"></script>
+  <script>
+    const socket = io();
+    
+    function getCurrentTime() {
+      const now = new Date();
+      return now.toLocaleTimeString();
+    }
+
+    function sendAction(action) {
+      const name = document.getElementById('name').value;
+      const number = document.getElementById('number').value;
+      const time = getCurrentTime();
+
+      socket.emit('employeeAction', {
+        name,
+        number,
+        time,
+        action
+      });
+    }
+  </script>
+</body>
+</html>

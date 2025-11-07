@@ -1,0 +1,59 @@
+<!-- public/admin.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+</head>
+<body>
+  <h2>Admin View</h2>
+  <ul id="logList"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const logList = document.getElementById('logList');
+    let storedLogs = [];
+
+    // Load existing logs from localStorage when page loads
+    function loadStoredLogs() {
+      const stored = localStorage.getItem('employeeLogs');
+      if (stored) {
+        storedLogs = JSON.parse(stored);
+        displayLogs(storedLogs);
+      }
+    }
+
+    // Display logs in the UI
+    function displayLogs(logs) {
+      logList.innerHTML = '';
+      logs.forEach(log => {
+        const item = document.createElement('li');
+        item.textContent = `${log.name} (${log.number}) - ${log.action} at ${log.time}`;
+        logList.appendChild(item);
+      });
+    }
+
+    // When new logs come in via socket
+    socket.on('updateLogs', (logs) => {
+      storedLogs = logs;
+      // Save to localStorage
+      localStorage.setItem('employeeLogs', JSON.stringify(logs));
+      // Update display
+      displayLogs(logs);
+    });
+
+    // Load stored logs when page loads
+    loadStoredLogs();
+
+    // Add clear button functionality
+    const clearButton = document.createElement('button');
+    clearButton.textContent = 'Clear All Logs';
+    clearButton.onclick = () => {
+      localStorage.removeItem('employeeLogs');
+      storedLogs = [];
+      displayLogs([]);
+    };
+    document.body.insertBefore(clearButton, logList);
+  </script>
+</body>
+</html>
